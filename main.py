@@ -1,64 +1,51 @@
-# main.py
 import os
-from tree_rag import TreeRAG
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from dotenv import load_dotenv
+from tree_rag import TreeRAG
+
+# 1. Load environment variables
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
-def main():
-    # Initialize with Gemini API
-    rag = TreeRAG(
-        tree_file_path="medical_tree.json",
-        gemini_api_key=api_key,  # Replace with your actual key
-        model="gemini-2.5-flash"  # or "gemini-1.5-pro" for better quality
-    )
-    
-    # Example queries
-    queries = [
-        "I have dizziness, nausea, dehydration and blurred vision what are medicines i need",
-    ]
-    
-    for query in queries:
-        print(f"\n{'='*60}")
-        print(f"Q: {query}")
-        print(f"{'='*60}")
-        
-        answer = rag.ask_structured_json(query)
-        print(f"A: {answer}")
 
-def interactive_chat():
-    """Interactive chat mode"""
-    rag = TreeRAG(
-        tree_file_path="medical_tree.json",
-        gemini_api_key=api_key,
-        model="gemini-2.5-flash"
-    )
-    
-    print("Medical Information Assistant (Gemini)")
-    print("Type 'quit' to exit, 'compare' to test retrieval methods")
-    print("-" * 50)
-    
-    while True:
-        query = input("\nYour question: ").strip()
-        
-        if query.lower() in ['quit', 'exit', 'q']:
-            print("Goodbye!")
-            break
-        
-        if query.lower() == 'compare':
-            test_query = input("Enter query to compare methods: ")
-            rag.compare_retrieval_methods(test_query)
-            continue
-        
-        if not query:
-            continue
-        
-        answer = rag.ask(query)
-        print(f"\nAnswer: {answer}")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY is missing. Please check your .env file.")
 
-if __name__ == "__main__":
-    # Use environment variable for API key (recommended)
-    import os
-    # os.environ["GEMINI_API_KEY"] = "your_key_here"
-    
-    # Or pass directly
-    main()
+# 2. Initialize the FastAPI app
+app = FastAPI(
+    title="Medical Tree RAG API",
+    description="Backend API for the Vectorless Medical Tree RAG system",
+    version="1.0"
+)
+
+# 3. Initialize the RAG system globally
+# This ensures medical_tree.json and the BM25 index are only loaded once at startup,
+# making subsequent API calls much faster.
+rag = TreeRAG(
+    tree_file_path="medical_tree.json",
+    gemini_api_key=api_key,
+    model="gemini-2.5-flash"
+)
+
+# 4. Define the exact structure of incoming requests
+class ChatRequest(BaseModel):
+    query: str
+
+# 5. Create a health check endpoint (optional but helpful)
+@app.get("/")
+async def root():
+    return {"message": "Medical RAG API is running. Send POST requests to /chat"}
+
+# 6. Create the main chat endpoint
+@app.post("/chat")
+async def ask_question(request: ChatRequest):
+    try:
+        # Pass the incoming query to your existing .ask() method
+        answer = rag.ask(request.query)
+        
+        # Return the answer (FastAPI automatically converts this to JSON)
+        return {"answer": answer}
+        
+    except Exception as e:
+        # If something breaks, return a standard 500 server error
+        raise HTTPException(status_code=500, detail=str(e))
