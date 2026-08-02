@@ -18,12 +18,24 @@ with st.sidebar:
     st.header("⚙️ Configuration")
     default_key = st.secrets.get("GEMINI_API_KEY", "")
 
-    api_key = st.text_input(
-        "Google Gemini API Key",
-        value=default_key,
-        type="password",
-        help="Leave as-is to use the default key, or replace it with your own."
-    )
+    # Get your default API key from Streamlit Secrets (if available)
+    try:
+        default_api_key = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        default_api_key = ""
+    
+    # Let the user decide whether to use their own key
+    use_own_key = st.checkbox("Use my own Gemini API Key", value=False)
+    
+    if use_own_key:
+        api_key = st.text_input(
+            "Enter your Gemini API Key",
+            type="password",
+            placeholder="AIzaSy..."
+        )
+    else:
+        api_key = default_api_key
+    
     model_name = st.selectbox("Gemini Model", ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"], index=0)
     tree_file = st.text_input("Medical Knowledge JSON file", value="medical_tree.json")
     
