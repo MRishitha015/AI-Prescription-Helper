@@ -39,15 +39,15 @@ with st.sidebar:
     model_name = st.selectbox("Gemini Model", ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"], index=0)
     tree_file = st.text_input("Medical Knowledge JSON file", value="medical_tree.json")
     
-    if os.path.exists(tree_file):
-        st.success(f"✅ Found {tree_file}")
-    else:
-        st.error(f"❌ {tree_file} not found.")
-        uploaded = st.file_uploader("Upload medical_tree.json", type=["json"])
-        if uploaded:
-            with open(tree_file, "wb") as f:
-                f.write(uploaded.getbuffer())
-            st.success("Saved! Refresh.")
+    #if os.path.exists(tree_file):
+    #    st.success(f"✅ Found {tree_file}")
+    #else:
+    #    st.error(f"❌ {tree_file} not found.")
+    #    uploaded = st.file_uploader("Upload medical_tree.json", type=["json"])
+    #   if uploaded:
+    #        with open(tree_file, "wb") as f:
+    #           f.write(uploaded.getbuffer())
+     #       st.success("Saved! Refresh.")
     
     st.divider()
     st.markdown("### 📌 Examples")
