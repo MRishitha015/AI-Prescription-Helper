@@ -37,7 +37,7 @@ with st.sidebar:
         api_key = default_api_key
     
     model_name = st.selectbox("Gemini Model", ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"], index=0)
-    tree_file = st.text_input("Medical Knowledge JSON file", value="medical_tree.json")
+    #tree_file = st.text_input("Medical Knowledge JSON file", value="medical_tree.json")
     
     #if os.path.exists(tree_file):
     #    st.success(f"✅ Found {tree_file}")
