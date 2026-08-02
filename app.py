@@ -11,7 +11,7 @@ import re
 st.set_page_config(page_title="Medical RAG - Prescription Builder", page_icon="🏥", layout="wide")
 
 st.title("🏥 Medical RAG - Prescription Builder")
-st.markdown("**Describe symptoms → Review medicines. Use + Add / ❌ Remove to build prescription. Then download as PDF.**")
+#st.markdown("**Describe symptoms → Review medicines. Use + Add / ❌ Remove to build prescription. Then download as PDF.**")
 
 # Sidebar
 with st.sidebar:
