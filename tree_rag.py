@@ -153,7 +153,7 @@ class TreeRAG:
             return {"error": "No relevant medical information found."}
         
         if self._is_symptom_query(query):
-            prompt = f"""Return ONLY a valid JSON object. No extra text.
+            prompt = f"""Return first a short explaination then a valid JSON object. No extra text.
 Extract all conditions matching the symptoms. For each, list medicines with exact dosages.
 CONTEXT:
 {context}
