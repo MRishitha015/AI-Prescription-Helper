@@ -16,7 +16,14 @@ st.markdown("**Describe symptoms → Review medicines. Use + Add / ❌ Remove to
 # Sidebar
 with st.sidebar:
     st.header("⚙️ Configuration")
-    api_key = st.text_input("Google Gemini API Key", type="password")
+    default_key = st.secrets.get("GEMINI_API_KEY", "")
+
+    api_key = st.text_input(
+        "Google Gemini API Key",
+        value=default_key,
+        type="password",
+        help="Leave as-is to use the default key, or replace it with your own."
+    )
     model_name = st.selectbox("Gemini Model", ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"], index=0)
     tree_file = st.text_input("Medical Knowledge JSON file", value="medical_tree.json")
     
